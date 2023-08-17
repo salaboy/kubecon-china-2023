@@ -1,1 +1,1 @@
-# dapr-istio-ambient
+# dapr-istio
