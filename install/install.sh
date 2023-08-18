@@ -76,6 +76,11 @@ spec:
       - name: istio-ingressgateway
         enabled: true
         k8s:
+          service:
+            ports: 
+            - nodePort: 31080
+              port: 80
+              targetPort: 8080
           podAnnotations:
             cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     pilot:
@@ -101,8 +106,10 @@ if [ $deploymentMode = serverless ]; then
    kubectl apply --filename https://github.com/knative/serving/releases/download/${KNATIVE_SERVING_VERSION}/serving-crds.yaml
    kubectl apply --filename https://github.com/knative/serving/releases/download/${KNATIVE_SERVING_VERSION}/serving-core.yaml
    kubectl apply --filename https://github.com/knative/net-istio/releases/download/${KNATIVE_ISTIO_VERSION}/release.yaml
+   kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_SERVING_VERSION}/serving-default-domain.yaml
+
    # Patch the external domain as the default domain svc.cluster.local is not exposed on ingress
-   kubectl patch cm config-domain --patch '{"data":{"example.com":""}}' -n knative-serving
+   kubectl patch configmap -n knative-serving config-domain -p "{\"data\": {\"127.0.0.1.sslip.io\": \"\"}}"
    # Downward APIs and Tag-header-based routing enabled
    kubectl patch cm config-features -n knative-serving -p '{"data":{"tag-header-based-routing":"Enabled", "kubernetes.podspec-fieldref": "Enabled"}}'
    echo "😀 Successfully installed Knative"
