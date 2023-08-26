@@ -135,6 +135,9 @@ kubectl wait --for=condition=ready pod -l control-plane=kserve-controller-manage
 kubectl apply -f https://github.com/kserve/kserve/releases/download/${KSERVE_VERSION}/kserve-runtimes.yaml
 echo "😀 Successfully installed KServe"
 
+## Let's install a KServe Inference Service
+kubectl apply -f resources/inference.yaml
+
 # Install Dapr using Helm
 helm repo add dapr https://dapr.github.io/helm-charts/
 
@@ -146,8 +149,22 @@ helm upgrade --install dapr dapr/dapr \
 --create-namespace \
 --wait
 
+kubectl apply -f resources/c4p-sql-init.yaml
+
 # Install Kafka
-helm install kafka oci://registry-1.docker.io/bitnamicharts/kafka --version 22.1.5 --set "provisioning.topics[0].name=events-topic" --set "provisioning.topics[0].partitions=1" --set "persistence.size=1Gi" 
+helm upgrade --install conference-kafka oci://registry-1.docker.io/bitnamicharts/kafka --version 22.1.5 --set "provisioning.topics[0].name=events-topic" --set "provisioning.topics[0].partitions=1" --set "persistence.size=1Gi" 
+
+# Install PostgreSQL
+
+helm upgrade --install conference-postgresql oci://registry-1.docker.io/bitnamicharts/postgresql --version 12.5.7 --set "image.debug=true" --set "primary.initdb.user=postgres" --set "primary.initdb.password=postgres" --set "primary.initdb.scriptsConfigMap=c4p-init-sql" --set "global.postgresql.auth.postgresPassword=postgres"
+
+
+# Install Redis
+helm upgrade --install conference-redis oci://registry-1.docker.io/bitnamicharts/redis --version 17.11.3 --set "architecture=standalone"
+
+## Install app
+helm upgrade --install conference oci://docker.io/salaboy/conference-app --version v3.0.0
+
 
 # Clean up
 rm -rf istio-${ISTIO_VERSION}

@@ -1,0 +1,42 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: agenda-service 
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+        dapr.io/app-id: agenda-service
+        dapr.io/app-port: "8080"
+        dapr.io/enabled: "true"
+        dapr.io/metrics-port: "9092"
+    spec:
+      containers:
+        - image: "{{ .Values.services.registry }}/{{ .Values.services.agenda.image }}:{{ .Values.services.tag  }}"
+          env:
+          - name: STATESTORE_NAME
+            value: {{ .Release.Name }}-agenda-service-statestore
+          - name: PUBSUB_NAME
+            value: {{ .Release.Name }}-conference-pubsub  
+          - name: POD_NODENAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName    
+

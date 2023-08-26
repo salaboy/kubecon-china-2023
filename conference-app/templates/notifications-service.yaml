@@ -7,12 +7,16 @@ spec:
     metadata:
       annotations:
         autoscaling.knative.dev/min-scale: "1"
+        dapr.io/app-id: notifications-service
+        dapr.io/app-port: "8080"
+        dapr.io/enabled: "true"
+        dapr.io/metrics-port: "9092"
     spec:
       containers:
-        - image: salaboy/notifications-service-0e27884e01429ab7e350cb5dff61b525:v1.0.0
+        - image: "{{ .Values.services.registry }}/{{ .Values.services.notifications.image }}:{{ .Values.services.tag  }}"
           env:
-          - name: KAFKA_URL
-            value: kafka.default.svc.cluster.local
+          - name: PUBSUB_NAME
+            value: {{ .Release.Name }}-conference-pubsub
           - name: POD_NODENAME
             valueFrom:
               fieldRef:
@@ -33,3 +37,4 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.serviceAccountName    
+
