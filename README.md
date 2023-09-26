@@ -1,6 +1,6 @@
 # Building Platforms - Devs & Data Scientist
 
-On this short tutorial we will use KServe, Knative, Istio, and Dapr to build a simple but powerful platform. 
+This short tutorial will use KServe, Knative, Istio, and Dapr to build a simple but powerful platform. 
 
 
 ## Installation
@@ -21,16 +21,24 @@ nodes:
 EOF
 
 ```
-To install Knative, KServe, Istio and Dapr run: 
+Install all the demo components running:
 
 ```
 ./install/install.sh
 ```
 
+This script installs and configures: 
+- [Knative Serving](https://knative.dev)
+- [Istio](https://istio.io/)
+- [Dapr](https://dapr.io)
+- [KServe](https://kserve.github.io/website/)
+- [Conference Application](https://github.com/salaboy/platforms-on-k8s)
+- Inference Model
 
 ## Accessing the Application
 
 You can access the application by pointing your browser to this address [http://frontend.default.127.0.0.1.sslip.io](http://frontend.default.127.0.0.1.sslip.io).
+
 
 
 
