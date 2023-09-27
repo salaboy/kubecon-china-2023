@@ -1,5 +1,9 @@
 # Building Platforms - Devs & Data Scientist
 
+
+![1695799566039](https://github.com/salaboy/kubecon-china-2023/assets/271966/9f03f106-d80f-4ba0-b880-4b8b796b5e17)
+
+
 This short tutorial will use KServe, Knative, Istio, and Dapr to build a simple but powerful platform. 
 
 
